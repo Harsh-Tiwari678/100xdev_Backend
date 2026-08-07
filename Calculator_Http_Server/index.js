@@ -7,7 +7,12 @@
 // for this there are many frameworks that we can use -- like Express , hono , elysiajs , trpc .... but we are gonna use Express
 
 const express = require('express');
+const path   =  require('path')
 const app = express(); //means we are creating a new http server or 1 htttp server 
+
+app.get("/",function(req,res){
+  res.sendFile(path.join(__dirname,"index.html"))
+})
 
 http://localhost:3002/sum?a=1&b=3
 // app.get("/add" , function(req,res){
