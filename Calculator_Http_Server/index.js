@@ -11,10 +11,10 @@ const path   =  require('path')
 const app = express(); //means we are creating a new http server or 1 htttp server 
 
 app.get("/",function(req,res){
-  res.sendFile(path.join(__dirname,"index.html"))
+  res.sendFile(path.join(__dirname , 'index.html')) // requires absolute path 
 })
 
-http://localhost:3002/sum?a=1&b=3
+// http://localhost:3002/sum?a=1&b=3
 // app.get("/add" , function(req,res){
 // const a = parseInt(req.query.a); // but this will be a string , we have to convert it .. using the parse int 
 // const b = parseInt(req.query.b);
