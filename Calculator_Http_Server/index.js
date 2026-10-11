@@ -9,6 +9,7 @@
 const express = require('express');
 const path   =  require('path')
 const app = express(); //means we are creating a new http server or 1 htttp server 
+app.use(express.json());
 
 app.get("/",function(req,res){
   res.sendFile(path.join(__dirname , 'index.html')) // requires absolute path 
@@ -29,9 +30,9 @@ app.get("/",function(req,res){
 // res.send("<b><i>" +sum + "</i></b>")
 
 //Now if the users send the request as the path parameters eg - /sum/1/100
-app.get("/sum/:a/:b",function(req,res){
-  const a = parseInt(req.params.a);
-  const b = parseInt(req.params.b);
+app.post("/sum",function(req,res){
+  const a = parseInt(req.body.a);
+  const b = parseInt(req.body.b);
   const sum = a+b;
 
 
@@ -77,4 +78,4 @@ app.get("/div/:a/:b",function(req,res){
     })
 })
 
-app.listen(3001)
+app.listen(3002)
