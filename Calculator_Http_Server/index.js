@@ -30,19 +30,16 @@ app.get("/",function(req,res){
 
 //Now if the users send the request as the path parameters eg - /sum/1/100
 app.get("/sum/:a/:b",function(req,res){
-const a = parseInt(req.params.a);
-const b  = parseInt(req.params.b);
+  const a = parseInt(req.params.a);
+  const b = parseInt(req.params.b);
+  const sum = a+b;
 
-const sum =  a+b;
 
-
-// sending json -----
-res.json({   
-ans : sum
-})
+res.json({
+ans: sum,
 })
 
-
+})
 
 
 
@@ -80,4 +77,4 @@ app.get("/div/:a/:b",function(req,res){
     })
 })
 
-app.listen(3000)
+app.listen(3001)
