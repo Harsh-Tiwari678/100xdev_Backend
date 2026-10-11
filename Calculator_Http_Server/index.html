@@ -6,19 +6,30 @@
     <title>Document</title>
 </head>
 <body>
-    <input type="number" placeholder="First Number">
-    <input type="number" placeholder="Second Number">
+    <input type="number" id="first" placeholder="First Number">
+    <input type="number" id="second" placeholder="Second Number">
     <br>
     <br>
     <div>
-        <button>Add</button>
-        <button>Sub</button>
-        <button>Mul</button>
-        <button>Div</button>
+        <button onclick="Calculate('sum')">Add</button>
+        <button onclick="Calculate('sub')">Sub</button>
+        <button onclick="Calculate('mul')">Mul</button>
+        <button onclick="Calculate('div')">Div</button>
     </div>
     <br>
     <div>
-        <input id="response" type="text">
+        <div id="response"> </div> 
     </div>
+    <script>
+        async function Calculate(Operations) {
+            
+        
+     const a  =  document.getElementById("first").value;
+     const b  =  document.getElementById("second").value;
+     const res = await fetch(`http://localhost:3001/${Operations}/${a}/${b}`); // sending an Http request to the server 
+     const json = await res.json(); // getting the response in the raw form so again await it to get the json 
+     document.getElementById("response").innerHTML = json.ans;  // having the ans 
+        }
+    </script>
 </body>
 </html>
