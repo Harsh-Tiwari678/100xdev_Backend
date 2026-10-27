@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>   
+</head>
+<body>
+    <div style="display: flex ; justify-content: space-between ; padding: 0px  100px ;">
+       <div id="shownotes"> Loading....
+       </div>
+
+    <div>
+        <input type="text" id="note-box"/>
+        <button onclick="addNotes();"> Create a Note</button>
+    </div>
+</div>
+<script>
+
+    async function addNotes(){
+        const response = await axios.post("http://localhost:3008/notes",{
+          note : document.getElementById("note-box").value,
+        })
+
+
+        //Now i want to show it to the frontend 
+
+        const newdiv = document.createElement("div");
+        newdiv.innerHTML = document.getElementById("note-box").value;
+         newdiv.setAttribute("style" , "border : 2px solid black ; padding : 10px;");
+         document.getElementById("shownotes").appendChild(newdiv);
+        
+
+         //make the box empty again --
+         document.getElementById("note-box").value = " ";
+
+    }
+   async function getNotes(){
+       const response = await axios.get("http://localhost:3008/notes");
+       const notes = response.data.notes;
+
+       //now i want to display it to the frontend 
+      document.getElementById("shownotes").innerHTML = " ";
+      
+      for(let i  =  0 ; i<notes.length ; i++){
+         const newnote = document.createElement("div");
+
+      newnote.innerHTML = notes[i];
+      newnote.setAttribute("style" , "border : 2px solid black ; padding : 10px;")
+        document.getElementById("shownotes").appendChild(newnote);
+       
+      }
+
+
+
+    }
+    getNotes();
+</script>
+</body>
+</html>
