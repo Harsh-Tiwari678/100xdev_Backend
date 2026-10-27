@@ -7,8 +7,7 @@ const app = express();
 // 2. GET - to get all my notes
 
 
-
-// We are going to store the notes of the user in an inmemory variable for now 
+app.use(express.json());// We are going to store the notes of the user in an inmemory variable for now 
 
 const notes = []; //this is bad , after that in future we will learn databases where we store our data 
 
@@ -34,4 +33,9 @@ app.get("/notes",(req,res)=>{
     })
 })
 
-app.listen(3000);
+//Serving Frontend ---
+app.get("/",(req,res)=>{
+    res.sendFile("/home/harshtiwari/Devlopment/100xdev_Backend/Auth_NotesApp_Backend/Frontend/index.html")
+})
+
+app.listen(3008);
