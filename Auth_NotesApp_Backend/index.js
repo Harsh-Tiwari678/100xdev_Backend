@@ -25,7 +25,7 @@ app.post("/signup" , function(req,res){
         message: "User with this same name already exist !!"
      })
     }
-    user.push({
+    users.push({
         username : username,  // if key and value are same so we can write username , password also
         password : password
     })
@@ -38,9 +38,12 @@ app.post("/signup" , function(req,res){
 
 //sing in --
 
-app.post("/signin", function(req,rea){
+app.post("/signin", function(req,res){
     const username = req.body.username;
     const password =  req.body.password;
+
+    console.log("aaya hua data" , username, password);
+    console.log("current users array",users);
     const userexist = users.find(user=>user.username == username && user.password == password)
     if(!userexist){
         res.status(403).json({
@@ -52,7 +55,6 @@ app.post("/signin", function(req,rea){
     //jwt sign in process
     const token = jwt.sign({
     username: username,
-    password : password,
 }, 'harsh123');
 
 res.json({
@@ -62,11 +64,30 @@ res.json({
 
 
 
-//POST endpoint -----
+//POST endpoint ----- //Autheticated Endpoint 
 
 app.post("/notes",function(req,res){
-    const note = req.body.note;req
-    notes.push(note); //maintaning user ne kon konse notes bnaye hai 
+//------------ Extracting the username form the token 
+    const token = req.body.token;
+    if(!token){
+        res.status(403).json({
+            message: "You are not logged in"
+        })
+        return;
+    }
+
+    const decode = jwt.verify(token , 'harsh123')
+    const username = decode.username;  // -> 
+
+    if(!username){
+        res.status(403).json({
+            message: "The token is maloformed ! "
+        })
+        return;
+    }
+    //-------- till here 
+    const note = req.body.note;
+    notes.push({note, username}); //maintaning user ne kon konse notes bnaye hai 
     //in production -- mongodb.store(notes);
 
     res.json({
@@ -78,8 +99,27 @@ app.post("/notes",function(req,res){
 //GET Endpoint ---
 
 app.get("/notes",(req,res)=>{
+
+     const token = req.body.token;
+    if(!token){
+        res.status(403).json({
+            message: "You are not logged in"
+        })
+        return;
+    }
+
+    const decode = jwt.verify(token , 'harsh123')
+    const username = decode.username;  // -> 
+
+    if(!username){
+        res.status(403).json({
+            message: "The token is maloformed ! "
+        })
+        return;
+    }
+    const userNotes = notes.filter(note=>note.username==username);
     res.json({
-        notes,
+        userNotes,
     })
 })
 
