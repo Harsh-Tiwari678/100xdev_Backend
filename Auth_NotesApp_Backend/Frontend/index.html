@@ -20,6 +20,10 @@
     async function addNotes(){
         const response = await axios.post("http://localhost:3008/notes",{
           note : document.getElementById("note-box").value,
+        },{
+            headers : {
+                token : localStorage.getItem("token")
+            }
         })
 
 
@@ -36,8 +40,12 @@
 
     }
    async function getNotes(){
-       const response = await axios.get("http://localhost:3008/notes");
-       const notes = response.data.notes;
+       const response = await axios.get("http://localhost:3008/notes" , {
+            headers : {
+                token : localStorage.getItem("token")
+            }
+        });
+       const notes = response.data.userNotes;
 
        //now i want to display it to the frontend 
       document.getElementById("shownotes").innerHTML = " ";
@@ -45,7 +53,7 @@
       for(let i  =  0 ; i<notes.length ; i++){
          const newnote = document.createElement("div");
 
-      newnote.innerHTML = notes[i];
+      newnote.innerHTML = notes[i].note;
       newnote.setAttribute("style" , "border : 2px solid black ; padding : 10px;")
         document.getElementById("shownotes").appendChild(newnote);
        
