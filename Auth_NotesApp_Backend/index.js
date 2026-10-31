@@ -41,9 +41,6 @@ app.post("/signup" , function(req,res){
 app.post("/signin", function(req,res){
     const username = req.body.username;
     const password =  req.body.password;
-
-    console.log("aaya hua data" , username, password);
-    console.log("current users array",users);
     const userexist = users.find(user=>user.username == username && user.password == password)
     if(!userexist){
         res.status(403).json({
@@ -68,7 +65,7 @@ res.json({
 
 app.post("/notes",function(req,res){
 //------------ Extracting the username form the token 
-    const token = req.body.token;
+    const token = req.headers.token;
     if(!token){
         res.status(403).json({
             message: "You are not logged in"
@@ -100,7 +97,7 @@ app.post("/notes",function(req,res){
 
 app.get("/notes",(req,res)=>{
 
-     const token = req.body.token;
+     const token = req.headers.token;
     if(!token){
         res.status(403).json({
             message: "You are not logged in"
@@ -126,6 +123,14 @@ app.get("/notes",(req,res)=>{
 //Serving Frontend ---
 app.get("/",(req,res)=>{
     res.sendFile("/home/harshtiwari/Devlopment/100xdev_Backend/Auth_NotesApp_Backend/Frontend/index.html")
+})
+
+app.get("/signup",(req,res)=>{
+    res.sendFile("/home/harshtiwari/Devlopment/100xdev_Backend/Auth_NotesApp_Backend/Frontend/signup.html")
+})
+
+app.get("/signin",(req,res)=>{
+    res.sendFile("/home/harshtiwari/Devlopment/100xdev_Backend/Auth_NotesApp_Backend/Frontend/signin.html")
 })
 
 app.listen(3008);
