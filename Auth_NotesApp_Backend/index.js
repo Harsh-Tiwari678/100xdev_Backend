@@ -1,6 +1,7 @@
 const express = require ('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+const {Authenticate} =  require('./middleware.js')
 
 //in this we have 2 end points 
 
@@ -63,26 +64,10 @@ res.json({
 
 //POST endpoint ----- //Autheticated Endpoint 
 
-app.post("/notes",function(req,res){
+app.post("/notes",Authenticate,function(req,res){
 //------------ Extracting the username form the token 
-    const token = req.headers.token;
-    if(!token){
-        res.status(403).json({
-            message: "You are not logged in"
-        })
-        return;
-    }
-
-    const decode = jwt.verify(token , 'harsh123')
-    const username = decode.username;  // -> 
-
-    if(!username){
-        res.status(403).json({
-            message: "The token is maloformed ! "
-        })
-        return;
-    }
     //-------- till here 
+    const username = req.username;
     const note = req.body.note;
     notes.push({note, username}); //maintaning user ne kon konse notes bnaye hai 
     //in production -- mongodb.store(notes);
@@ -95,25 +80,8 @@ app.post("/notes",function(req,res){
 
 //GET Endpoint ---
 
-app.get("/notes",(req,res)=>{
-
-     const token = req.headers.token;
-    if(!token){
-        res.status(403).json({
-            message: "You are not logged in"
-        })
-        return;
-    }
-
-    const decode = jwt.verify(token , 'harsh123')
-    const username = decode.username;  // -> 
-
-    if(!username){
-        res.status(403).json({
-            message: "The token is maloformed ! "
-        })
-        return;
-    }
+app.get("/notes",Authenticate,(req,res)=>{
+    const username  = req.username;
     const userNotes = notes.filter(note=>note.username==username);
     res.json({
         userNotes,
