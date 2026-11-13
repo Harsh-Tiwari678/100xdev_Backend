@@ -116,8 +116,25 @@ res.json({
 
 //create boards---
 
-app.post('/board',function(req,res){
-
+app.post('/board',Authmiddleware,function(req,res){
+const userId = req.userId;
+const organization_id = req.body.organization_id;
+const organisation = ORGANIZATIONS.find(org=>org.id === organization_id);
+if(!organisation || organisation.admin!=userId){
+    res.status(403).json({
+   msg: "Either this org does not exist or the admin is not correct !"
+    })
+    return;
+}
+BOARDS.push({
+    id : BOARDS_ID++,
+    title : req.body.title,
+    organization_id: req.body.organization_id,
+})
+res.json({
+    msg : "The board is created succesfully ! ",
+    id : BOARDS_ID-1,
+})
 })
 
 // now create an issue --
