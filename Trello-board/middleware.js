@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-
 function Authmiddleware(req,res,next){
 const token = req.headers.token;
 const decode = jwt.verify(token , 'harsh1234');
