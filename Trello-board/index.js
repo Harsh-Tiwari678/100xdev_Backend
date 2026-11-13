@@ -48,7 +48,7 @@ res.json({
 app.post('/signin', function(req,res){
     const username = req.body.username;
     const password = req.body.password;
-   const userExist =  USERS.find = (u=>u.username==username && u.u.password==password);
+   const userExist =  USERS.find(u=>u.username===username && u.password===password);
    if(!userExist){
     res.status(403).json({
         msg:"The Credentials are incorrect"
@@ -69,14 +69,49 @@ res.json({
 
 // creating organizations ----
 
-app.post('/organizations', function(req,res){
+app.post('/organizations', Authmiddleware,function(req,res){
+const userId = req.userId;
+ORGANIZATIONS.push({
+    id: ORGANIZATIONS_ID++,
+    title: req.body.title,
+    description : req.body.description,
+    admin : userId,
+    members : [],
+})
 
+res.json({
+    msg  : "Organization created Succesfully",
+    id : ORGANIZATIONS_ID-1
+})
 })
 
 // add-member to the org 
 
-app.post('/add-member-to-the-organization',function(req,res){
+app.post('/add-member-to-the-organization',Authmiddleware,function(req,res){
+const userId = req.userId;
+const organization_id = req.body.organization_id;
+const memberusername = req.body.memberusername;
+const orgExist  = ORGANIZATIONS.find(org=>org.id==organization_id);
+if(!orgExist||orgExist.admin!=userId){
+    res.status(403).json({
+        msg: "Either the org does not exist or the requester is not the admin"
+    })
+    return;
+}
 
+const memberExist  = USERS.find(u=>u.username==memberusername);
+if(!memberExist){
+    res.status(403).json({
+        msg: "The user u try to add does not exist ! "
+    })
+    return;
+}
+orgExist.members.push(
+    memberExist.id,
+)
+res.json({
+    msg : 'Member added Succesfully !'
+})
 })
 
 //create boards---
@@ -93,7 +128,31 @@ app.post('/issue', function(req, res){
 
 // GET Endpoints --------------------------------
 
-
+app.get('/organisations',Authmiddleware,function(req,res){
+const userId =  req.userId;
+const organization_id = parseInt(req.query.organization_id);
+const organisation = ORGANIZATIONS.find(org=>org.id === organization_id);
+if(!organisation || organisation.admin!=userId){
+    res.status(403).json({
+   msg: "Either this org does not exist or the admin is not correct !"
+    })
+    return;
+}
+res.json({
+    organisation: {
+      ... organisation,
+      members: organisation.members.map(memberId=>{
+     const user = USERS.find(user=>user.id===memberId);
+     return{
+        id : memberId,
+        username : user.username,
+     }
+      }
+       
+      )
+    }
+})
+})
 // when go to the board , can see what boards i have 
 app.get('/boards',function(req,res){
 
@@ -119,7 +178,30 @@ app.put('/issues',function(req,res){
 
 // DELETE endpoint --------------------------------
 
-app.delete('/members', function(req,res){
+app.delete('/members', Authmiddleware, function(req,res){
+const userId = req.userId;
+const organization_id = req.body.organization_id;
+const memberusername = req.body.memberusername;
+const orgExist  = ORGANIZATIONS.find(org=>org.id==organization_id);
+if(!orgExist||orgExist.admin!=userId){
+    res.status(403).json({
+        msg: "Either the org does not exist or the requester is not the admin"
+    })
+    return;
+}
+
+const memberExist  = USERS.find(u=>u.username==memberusername);
+if(!memberExist){
+    res.status(403).json({
+        msg: "The user u try to add does not exist ! "
+    })
+    return;
+}
+orgExist.members = orgExist.members.filter(user=> user != memberExist.id);
+    
+res.json({
+    msg : 'Member removed Succesfully !'
+})
 
 })
 
