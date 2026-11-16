@@ -51,10 +51,11 @@ app.post("/todos", authmiddlware, async function(req,res){
 const userId = req.userId;
 const title = req.body.title;
 const description = req.body.description;
+const done   = req.body.done;
  await Todomodel.create({
     title : title ,
     description : description,
-    done  : false,
+    done  : done,
     userId : userId
 })
 
@@ -67,31 +68,33 @@ res.json({
 
 
 
-app.delete("/todo", authmiddlware,function(req,res){
+app.delete("/todo", authmiddlware, async function(req,res){
 const userId = req.userId;
-const todoid = parseInt(req.query.id);
-const todoexist = TODOS.find(t=>t.id===todoid && t.userId===userId);
-if(!todoexist){
-     res.status(403).json({
-        msg: "This todo does not exist",
-    })
-    return;
+const todoid = req.query.id;
+console.log("req.userId:", req.userId);
+console.log("todoid:", todoid);
 
-}
-TODOS = TODOS.filter(todo=>todo.id!=todoid);
+const found = await Todomodel.findById(todoid);
+console.log("todo in DB:", found);
+const Deleted_todo = await Todomodel.findOneAndDelete({
+   _id: todoid,
+    userId : userId
+})
 res.json({
     id : todoid,
-    Deleted_todo : todoexist,
+    Deleted_todo,
     msg : "This todo is succesfully deleted !"
 })
 })
 
-app.get("/todos", authmiddlware,function(req,res){
+app.get("/todos", authmiddlware, async function(req,res){
 const userId = req.userId;
-const usertodos = TODOS.filter(todo=>todo.userId===userId);
+const response = await Todomodel.find({
+    userId : userId
+})
 
 res.json({
-    todo : usertodos
+    todo : response
 })
 })
 app.listen(3000);

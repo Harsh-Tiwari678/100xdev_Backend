@@ -5,9 +5,10 @@ function authmiddlware(req,res,next){
         res.status(403).json({
             msg : "Pls send us the token"
     })
+    return;
     }
     const decode = jwt.verify(token,"REDACTED");
-    const userId = decode.userId;
+    const userId = decode.id;
 
     if(!userId){ // it just check the value is falsy or not ( like undefined , o )
         res.status(403).json({
