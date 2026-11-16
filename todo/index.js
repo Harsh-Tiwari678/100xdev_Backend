@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const {authmiddlware} = require('./middleware')
 const {Usermodel , Todomodel} = require("./models");
 const { default: mongoose } = require('mongoose');
-mongoose.connect("REDACTED")
+
+
+mongoose.connect(process.env.MONGO_URI);
 // we will have 4 endpoints here 
 //now the last 2 shoull be guided by the middleware 
 
@@ -38,7 +41,7 @@ app.post("/signin", async function(req,res){
   }
   const token = jwt.sign({
     id  : response._id.toString(), // why??
-  },"REDACTED")
+  },process.env.JWT_SECRET)
 
   res.json({
     token,

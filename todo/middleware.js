@@ -7,7 +7,7 @@ function authmiddlware(req,res,next){
     })
     return;
     }
-    const decode = jwt.verify(token,"REDACTED");
+    const decode = jwt.verify(token,process.env.JWT_SECRET);
     const userId = decode.id;
 
     if(!userId){ // it just check the value is falsy or not ( like undefined , o )
